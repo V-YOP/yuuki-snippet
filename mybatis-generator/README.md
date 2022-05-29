@@ -1,0 +1,1 @@
+关于mybatis generator的配置和使用。

@@ -1,0 +1,1 @@
+关于mybatis的xml的编写，以及基于spring boot的配置和手动配置的方法。
