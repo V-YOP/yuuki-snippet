@@ -33,26 +33,44 @@
         <!-- 指定生成java文件的编码，一般没啥必要 -->
         <property name="javaFileEncoding" value="UTF-8"/>
 
-        <!-- jdbcConnection，顾名思义！其中connectionURL是jdbc url的形式 -->
-        <jdbcConnection driverClass="com.oracle.jdbc.OracleDriver"
-                        connectionURL="jdbc:hsqldb:mem:aname"
-                        userId="system"
-                        password="root"/>
-
         <!-- 关于生成的注释的配置，注释一般没有什么值得注意的信息，不如自己重写 -->
         <commentGenerator>
             <!-- 不生成任何注释 -->
             <property name="suppressAllComments" value="false"/>
             <!-- 注释中不提供时间戳 -->
             <property name="suppressDate" value="true"/>
-            <!-- 添加数据库的备注，需要一些额外配置才能使用 -->
+            <!-- 添加数据库的备注，需要Driver支持且JDBC Url进行一些额外配置才能使用 -->
             <property name="addRemarkComments" value="true"/>
         </commentGenerator>
 
+        <!-- jdbcConnection，顾名思义！其中connectionURL是jdbc url的形式 -->
+        <!-- TODO 一些影响行为的JDBC配置，如字段大小写等 -->
+        <jdbcConnection driverClass="com.oracle.jdbc.OracleDriver"
+                        connectionURL="jdbc:hsqldb:mem:aname"
+                        userId="system"
+                        password="root"/>
+
+        <!-- javaModelGenerator 设置生成实体类的配置 -->
+        <!-- targetPackage 顾名思义 -->
+        <!-- targetProject 需要指向java源代码路径，可以是绝对路径也可以是相对路径（工作目录默认是module根目录，即该pom所在） -->
+        <!-- 这玩意居然还能配置生成不可变类……但使用不可变类会导致必须使用构造器入参，这在工程中可能会造成各种问题 -->
         <javaModelGenerator targetPackage="example.model" targetProject="src/main/java"/>
 
+        <!-- sqlMapGenerator 生成 mapper XML 文件 -->
+        <sqlMapGenerator targetPackage="example.mapping" targetProject="src/main/java" />
+
+        <!-- javaClientGenerator 生成对应XML的接口类 -->
         <javaClientGenerator type="XMLMAPPER" targetPackage="example.mapper" targetProject="src/main/java"/>
 
-        <table tableName="FooTable" />
+        <!-- table 标签代表要生成相应代码的表，一个表一个table标签，全部表可以用 % -->
+        <!-- schema 即 schema，如果配置了，则生成的表名会类似 shcema.tableName，相同的配置还有catalog -->
+        <!-- 关于分隔符的两个配置：delimitIdentifiers，delimitAllColumns -->
+        <table tableName="FOO_TABLE">
+            <!-- generatedKey，即自动生成主键，其会在SQL中插入selectKey标签 -->
+            <!-- generatedKey 只能出现一次 -->
+            <!-- sqlStatement可以为一些特殊值，如MySql，此时会被额外对待 -->
+            <!-- oracle这样的是插入前获取主键，mysql（自增）这样的是插入后获取主键 -->
+            <generatedKey column="ID" sqlStatement="SELECT SEQ.NEXTVAL FROM DUAL" />
+        </table>
     </context>
 </generatorConfiguration>
