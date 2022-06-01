@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxts.updater.dao.origin.EncDecDao">
+
+	<update id="updateTable" databaseId="oracle">
+		<if test="!fieldNames.isEmpty()">
+			<foreach collection="objs" item="value" index="i" open="begin" separator=";" close=";end;" >
+				UPDATE ${tableName} SET
+				<foreach collection="fieldNames" item="field" separator=",">
+					${field} = #{value.${field}, jdbcType=VARCHAR}
+				</foreach>
+				WHERE ${primaryKeyName} = #{value.${primaryKeyName},jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</update>
+
+	<select id="selectFields" resultType="java.util.Map" databaseId="oracle">
+		SELECT <foreach collection="fieldNames" separator="," item="field">${field}</foreach>
+		FROM ${tableName} order by ${primaryKeyName}
+	</select>
+
+	<select id="count" resultType="java.lang.Integer" databaseId="oracle">
+		SELECT COUNT(1) FROM ${tableName}
+	</select>
+
+	<insert id="insert" databaseId="oracle">
+		INSERT ALL
+			<foreach collection="objs" separator=" " item="obj">
+			    INTO ${tableName}
+				<foreach collection="fieldNames" separator="," item="field" open="(" close=")">
+					${field}</foreach>
+					VALUES
+				<foreach collection="obj" item="item" open="(" close=")" separator=",">#{item}</foreach>
+			</foreach>
+		SELECT 1 FROM DUAL
+	</insert>
+</mapper>
+
+
+		<!--
+
+            <update id="updateTable" databaseId="oracle">
+                UPDATE ${tableName}
+                <trim prefix="SET">
+                    <foreach collection="fieldNames" item="field" separator=", ">
+                        ${field} =
+                        <trim suffix="end">
+                            case ${primaryKeyName}
+                            <foreach collection="objs" item="value" separator=" ">
+                                <if test="value[field] != null">
+                                    WHEN #{value.${primaryKeyName},jdbcType=VARCHAR} THEN #{value.${field},jdbcType=VARCHAR}
+                                </if>
+                            </foreach>
+                            WHEN ${primaryKeyName} THEN ${field}
+                            ELSE ${field}
+                        </trim>
+                    </foreach>
+                </trim>
+                WHERE
+                ${primaryKeyName} IN
+                        <trim suffixOverrides=" or ${primaryKeyName} in ()">
+                            <foreach collection="objs" item = "item" index="index" open="(" close=")">
+                                <if test="index != 0">
+                                    <choose>
+                                        <when test="index % 1000 == 999">) or ${primaryKeyName} IN (</when>
+                                        <otherwise>,</otherwise>
+                                    </choose>
+                                </if>
+                                #{item.${primaryKeyName}}
+                            </foreach>
+                        </trim>
+            </update>
+        -->

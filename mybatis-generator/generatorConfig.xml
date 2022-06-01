@@ -20,7 +20,7 @@
     <!-- context，即环境，可以认为就是一个配置集，运行时可以选择通过id选择特定上下文 -->
     <!-- targetRuntime 指代运行时环境，Mybatis3是默认值，MyBatis3Simple不生成Example -->
     <!-- defaultModelType定义生成实体类的结构，flat表示使用扁平结构，一般如此 -->
-    <context id="simple" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+    <context id="simple" targetRuntime="MyBatis3" defaultModelType="flat">
         <!-- property标签用于覆盖一些配置，也用于定义待重用的字符串变量（可以通过${}引用） -->
         <!-- 这里定义了自动添加分隔符的配置：如果表名或字段名和关键字重名或有空格，就加入分隔符 -->
         <!-- 分隔符对mysql来说是`，对oracle，是"，对SQL Server，是[和] -->
@@ -64,8 +64,12 @@
 
         <!-- table 标签代表要生成相应代码的表，一个表一个table标签，全部表可以用 % -->
         <!-- schema 即 schema，如果配置了，则生成的表名会类似 shcema.tableName，相同的配置还有catalog -->
+        <!-- 如果不同schema，catalog（或database）中均有该表，可能会生成多个重复文件，即使限定了数据库名等仍旧会这样， 
+             为此，应当显式指定 schema，catalog 以唯一确定一张表 -->
+        <!-- TODO schema 和 catalog 究竟是什么？此书描述的好像不太对 -->
+
         <!-- 关于分隔符的两个配置：delimitIdentifiers，delimitAllColumns -->
-        <table tableName="FOO_TABLE">
+        <table schema="SOME_DATABASE" tableName="FOO_TABLE">
             <!-- generatedKey，即自动生成主键，其会在SQL中插入selectKey标签 -->
             <!-- generatedKey 只能出现一次 -->
             <!-- sqlStatement可以为一些特殊值，如MySql，此时会被额外对待 -->
