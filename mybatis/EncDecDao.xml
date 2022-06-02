@@ -39,35 +39,35 @@
 
 		<!--
 
-            <update id="updateTable" databaseId="oracle">
-                UPDATE ${tableName}
-                <trim prefix="SET">
-                    <foreach collection="fieldNames" item="field" separator=", ">
-                        ${field} =
-                        <trim suffix="end">
-                            case ${primaryKeyName}
-                            <foreach collection="objs" item="value" separator=" ">
-                                <if test="value[field] != null">
-                                    WHEN #{value.${primaryKeyName},jdbcType=VARCHAR} THEN #{value.${field},jdbcType=VARCHAR}
-                                </if>
-                            </foreach>
-                            WHEN ${primaryKeyName} THEN ${field}
-                            ELSE ${field}
-                        </trim>
-                    </foreach>
-                </trim>
-                WHERE
-                ${primaryKeyName} IN
-                        <trim suffixOverrides=" or ${primaryKeyName} in ()">
-                            <foreach collection="objs" item = "item" index="index" open="(" close=")">
-                                <if test="index != 0">
-                                    <choose>
-                                        <when test="index % 1000 == 999">) or ${primaryKeyName} IN (</when>
-                                        <otherwise>,</otherwise>
-                                    </choose>
-                                </if>
-                                #{item.${primaryKeyName}}
-                            </foreach>
-                        </trim>
-            </update>
+        <update id="updateTable" databaseId="oracle">
+            UPDATE ${tableName}
+            <trim prefix="SET">
+                <foreach collection="fieldNames" item="field" separator=", ">
+                    ${field} =
+                    <trim suffix="end">
+                        case ${primaryKeyName}
+                        <foreach collection="objs" item="value" separator=" ">
+                            <if test="value[field] != null">
+                                WHEN #{value.${primaryKeyName},jdbcType=VARCHAR} THEN #{value.${field},jdbcType=VARCHAR}
+                            </if>
+                        </foreach>
+                        WHEN ${primaryKeyName} THEN ${field}
+                        ELSE ${field}
+                    </trim>
+                </foreach>
+            </trim>
+            WHERE
+            ${primaryKeyName} IN
+                    <trim suffixOverrides=" or ${primaryKeyName} in ()">
+                        <foreach collection="objs" item = "item" index="index" open="(" close=")">
+                            <if test="index != 0">
+                                <choose>
+                                    <when test="index % 1000 == 999">) or ${primaryKeyName} IN (</when>
+                                    <otherwise>,</otherwise>
+                                </choose>
+                            </if>
+                            #{item.${primaryKeyName}}
+                        </foreach>
+                    </trim>
+        </update>
         -->
