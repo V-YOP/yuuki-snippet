@@ -30,6 +30,8 @@
         <property name="beginningDelimiter" value="&quot;" />
         <property name="endingDelimiter" value="&quot;"/>
 
+        <property name="remarksReporting" value="true"/>
+
         <!-- 指定生成java文件的编码，一般没啥必要 -->
         <property name="javaFileEncoding" value="UTF-8"/>
 
@@ -48,7 +50,10 @@
         <jdbcConnection driverClass="com.oracle.jdbc.OracleDriver"
                         connectionURL="jdbc:hsqldb:mem:aname"
                         userId="system"
-                        password="root"/>
+                        password="root">
+            <!-- oracle 需要此配置才能获取到数据库中的注释 -->
+            <property name="remarksReporting" value="true"/>
+        </jdbcConnection>
 
         <!-- javaModelGenerator 设置生成实体类的配置 -->
         <!-- targetPackage 顾名思义 -->
